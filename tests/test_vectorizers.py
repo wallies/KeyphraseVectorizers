@@ -3,7 +3,7 @@ from typing import List
 import flair
 import spacy
 from flair.models import SequenceTagger
-from flair.splitters import SegtokSentenceSplitter
+from flair.splitter import SegtokSentenceSplitter
 from keybert import KeyBERT
 
 import tests.utils as utils
