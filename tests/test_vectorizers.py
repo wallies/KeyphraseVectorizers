@@ -103,7 +103,7 @@ def test_custom_tagger():
 
     # define custom pos tagger function using flair
     def custom_pos_tagger(raw_documents: List[str], tagger: flair.models.SequenceTagger = tagger,
-                          splitter: flair.tokenization.SegtokSentenceSplitter = splitter) -> List[tuple]:
+                          splitter: flair.splitter.SegtokSentenceSplitter = splitter) -> List[tuple]:
         """
         Important:
 
