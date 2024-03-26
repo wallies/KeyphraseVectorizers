@@ -8,7 +8,9 @@ with open("README.md", "r", encoding="utf-8") as fh:
 main_ns = {}
 ver_path = convert_path('keyphrase_vectorizers/_version.py')
 with open(ver_path) as ver_file:
-    exec(ver_file.read(), main_ns)
+    version_line = [line for line in ver_file.readlines() if line.startswith('__version__')][0]
+    main_ns['__version__'] = version_line.split('=')[-1].strip().strip('"')
+
 
 ver_path = convert_path('requirements.txt')
 with open(ver_path) as ver_file:
