@@ -42,7 +42,7 @@ jobs:
 
     - name: Extract ruff version from requirements.txt
       id: ruff_version
-      run: echo "version=$(grep -oP 'ruff==\K[^"]+' requirements-test.txt)" >> $GITHUB_OUTPUT
+      run: echo "version=$(grep -oP 'ruff==\K[^"]+' tests/requirements.txt)" >> $GITHUB_OUTPUT
 
     - uses: chartboost/ruff-action@88d6702e4e291dc297952ad075bdbfb811bd61c2 # main
       with:
@@ -51,7 +51,7 @@ jobs:
         RUFF_OUTPUT_FORMAT: github
 
   ruff-format:
-    if: github.event.pull_request.draft == false && github.ref != 'refs/heads/main'
+    if: github.event.pull_request.draft == false && github.ref != 'refs/heads/master'
     runs-on: ubuntu-latest
     timeout-minutes: 10
     strategy:
@@ -78,7 +78,7 @@ jobs:
 
     - name: Extract ruff version from requirements.txt
       id: ruff_version
-      run: echo "version=$(grep -oP 'ruff==\K[^"]+' requirements-test.txt)" >> $GITHUB_OUTPUT
+      run: echo "version=$(grep -oP 'ruff==\K[^"]+' tests/requirements.txt)" >> $GITHUB_OUTPUT
 
     - name: Get Python changed files
       id: changed-py-files
