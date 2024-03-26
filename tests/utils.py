@@ -44,7 +44,7 @@ def get_french_docs():
 
 def get_english_test_keyphrases():
     sorted_english_test_keyphrases = ['algorithm', 'class labels', 'document', 'document content', 'document relevance',
-                                      'documents', 'example', 'example input', 'function', 'groups', 'indication',
+                                      'documents', 'example', 'function', 'groups', 'indication',
                                       'inductive bias', 'information retrieval', 'information retrieval environment',
                                       'input', 'input object', 'interest', 'keywords', 'list', 'machine', 'main topics',
                                       'new examples', 'optimal scenario', 'output', 'output pairs', 'output value',
