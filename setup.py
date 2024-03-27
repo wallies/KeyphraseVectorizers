@@ -17,7 +17,7 @@ with open(ver_path) as ver_file:
     base_packages = ver_file.read().splitlines()
 
 setuptools.setup(
-    name='keyphrase-vectorizers',
+    name='keyphrase_vectorizers',
     version=main_ns['__version__'],
     url='https://github.com/TimSchopf/KeyphraseVectorizers',
     license='BSD 3-Clause "New" or "Revised" License',
@@ -39,6 +39,6 @@ setuptools.setup(
     install_requires=base_packages,
     package_dir={"": "."},
     packages=setuptools.find_packages(where="."),
-    python_requires='>=3.7',
+    python_requires='>=3.9',
     data_files=[('requirements', ['requirements.txt'])],
 )
