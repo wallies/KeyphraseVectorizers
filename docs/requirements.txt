@@ -1,4 +1,4 @@
-sphinx>=3.2.1
+sphinx>=3.3.0
 sphinx-rtd-theme>=0.5.2
 sphinxcontrib-applehelp>=1.0.2
 sphinxcontrib-devhelp>=1.0.2
@@ -21,3 +21,7 @@ psutil>=5.8.0
 transformers>=4.36.0 # not directly required, pinned by Snyk to avoid a vulnerability
 setuptools>=65.5.1 # not directly required, pinned by Snyk to avoid a vulnerability
 wheel>=0.38.0 # not directly required, pinned by Snyk to avoid a vulnerability
+certifi>=2023.7.22 # not directly required, pinned by Snyk to avoid a vulnerability
+jinja2>=3.1.3 # not directly required, pinned by Snyk to avoid a vulnerability
+pygments>=2.15.0 # not directly required, pinned by Snyk to avoid a vulnerability
+requests>=2.31.0 # not directly required, pinned by Snyk to avoid a vulnerability
