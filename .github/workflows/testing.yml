@@ -11,23 +11,130 @@ on:
     branches:
     - master
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
 jobs:
+  ruff-lint:
+    if: github.event.pull_request.draft == false && github.ref != 'refs/heads/master'
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+    permissions:
+      contents: 'read'
+
+    steps:
+    - name: Harden Runner
+      uses: step-security/harden-runner@63c24ba6bd7ba022e95695ff85de572c04a18142 # v1
+      with:
+        egress-policy: block
+        disable-sudo: true
+        allowed-endpoints: >
+          api.github.com:443
+          github.com:443
+          pypi.org:443
+          files.pythonhosted.org:443
+          pipelinesghubeus2.actions.githubusercontent.com:443
+
+    - uses: actions/checkout@9bb56186c3b09b4f86b1c65136769dd318469633
+      with:
+        fetch-depth: 0
+
+    - name: Extract ruff version from requirements.txt
+      id: ruff_version
+      run: echo "version=$(grep -oP 'ruff==\K[^"]+' tests/requirements.txt)" >> $GITHUB_OUTPUT
+
+    - uses: chartboost/ruff-action@88d6702e4e291dc297952ad075bdbfb811bd61c2 # main
+      with:
+        version: ${{ steps.ruff_version.outputs.version }}
+      env:
+        RUFF_OUTPUT_FORMAT: github
+
+  ruff-format:
+    if: github.event.pull_request.draft == false && github.ref != 'refs/heads/master'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    strategy:
+      fail-fast: false
+    permissions:
+      contents: 'read'
+
+    steps:
+    - name: Harden Runner
+      uses: step-security/harden-runner@63c24ba6bd7ba022e95695ff85de572c04a18142 # v1
+      with:
+        egress-policy: block
+        disable-sudo: true
+        allowed-endpoints: >
+          api.github.com:443
+          github.com:443
+          pypi.org:443
+          files.pythonhosted.org:443
+          pipelinesghubeus2.actions.githubusercontent.com:443
+
+    - uses: actions/checkout@9bb56186c3b09b4f86b1c65136769dd318469633
+      with:
+        fetch-depth: 0
+
+    - name: Extract ruff version from requirements.txt
+      id: ruff_version
+      run: echo "version=$(grep -oP 'ruff==\K[^"]+' tests/requirements.txt)" >> $GITHUB_OUTPUT
+
+    - name: Get Python changed files
+      id: changed-py-files
+      uses: tj-actions/changed-files@20576b4b9ed46d41e2d45a2256e5e2316dde6834 # v43.0.1
+      with:
+        files: |
+          keyphrase_vectorizers/*.py
+          keyphrase_vectorizers/**/*.py
+
+    - uses: chartboost/ruff-action@88d6702e4e291dc297952ad075bdbfb811bd61c2 # main
+      if: steps.changed-py-files.outputs.any_changed == 'true'
+      with:
+        version: ${{ steps.ruff_version.outputs.version }}
+        args: format --check
+        src: ${{ steps.changed-py-files.outputs.all_changed_files }}
+      env:
+        RUFF_OUTPUT_FORMAT: github
+
   build:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        python-version: [ 3.7, 3.8, 3.9 ]
+        python-version: [ 3.9, '3.10', '3.11' ]
 
     steps:
-    - uses: actions/checkout@v2
+    - name: Harden Runner
+      uses: step-security/harden-runner@63c24ba6bd7ba022e95695ff85de572c04a18142 # v2.7.0
+      with:
+        disable-sudo: true
+        egress-policy: block
+        allowed-endpoints: >
+          api.github.com:443
+          cdn-lfs.huggingface.co:443
+          files.pythonhosted.org:443
+          github.com:443
+          huggingface.co:443
+          objects.githubusercontent.com:443
+          pypi.org:443
+          raw.githubusercontent.com:443
+
+    - uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
     - name: Set up Python ${{ matrix.python-version }}
-      uses: actions/setup-python@v1
+      uses: actions/setup-python@0a5c61591373683505ea898e09a3ea4f39ef2b9c # v5.0.0
       with:
         python-version: ${{ matrix.python-version }}
+
     - name: Install dependencies
       run: |
-        python -m pip install --upgrade pip
-        pip install -r "requirements.txt"
-        pip install -r "tests/requirements.txt"
+        python -m pip install --upgrade pip uv
+        uv pip install --system -r "requirements.txt"
+        uv pip install --system -r "tests/requirements.txt"
+        python -m spacy download fr_dep_news_trf
+
     - name: Run tests
       run: pytest
