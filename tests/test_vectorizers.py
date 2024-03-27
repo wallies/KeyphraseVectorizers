@@ -7,7 +7,7 @@ from flair.splitter import SegtokSentenceSplitter
 from keybert import KeyBERT
 
 import tests.utils as utils
-from keyphrase_vectorizers import KeyphraseCountVectorizer, KeyphraseTfidfVectorizer
+from ..keyphrase_vectorizers import KeyphraseCountVectorizer, KeyphraseTfidfVectorizer
 
 english_docs = utils.get_english_test_docs()
 german_docs = utils.get_german_test_docs()
