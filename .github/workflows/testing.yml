@@ -48,7 +48,7 @@ jobs:
       id: ruff_version
       run: echo "version=$(grep -oP 'ruff==\K[^"]+' tests/requirements.txt)" >> $GITHUB_OUTPUT
 
-    - uses: chartboost/ruff-action@88d6702e4e291dc297952ad075bdbfb811bd61c2 # main
+    - uses: chartboost/ruff-action@47bc0821f512cc107818f1d4337f19f676bf5bee # main
       with:
         version: ${{ steps.ruff_version.outputs.version }}
       env:
@@ -92,7 +92,7 @@ jobs:
           keyphrase_vectorizers/*.py
           keyphrase_vectorizers/**/*.py
 
-    - uses: chartboost/ruff-action@88d6702e4e291dc297952ad075bdbfb811bd61c2 # main
+    - uses: chartboost/ruff-action@47bc0821f512cc107818f1d4337f19f676bf5bee # main
       if: steps.changed-py-files.outputs.any_changed == 'true'
       with:
         version: ${{ steps.ruff_version.outputs.version }}
