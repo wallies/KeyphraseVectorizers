@@ -5,6 +5,7 @@
 [![Documentation Status](https://readthedocs.org/projects/keyphrase-vectorizers/badge/?version=latest)](https://keyphrase-vectorizers.readthedocs.io/en/latest/?badge=latest)
 [![DOI:10.5220/0011546600003335](https://zenodo.org/badge/DOI/10.5220/0011546600003335.svg)](https://doi.org/10.5220/0011546600003335)
 [![PWC](https://img.shields.io/endpoint.svg?url=https://paperswithcode.com/badge/patternrank-leveraging-pretrained-language/keyphrase-extraction-on-inspec)](https://paperswithcode.com/sota/keyphrase-extraction-on-inspec?p=patternrank-leveraging-pretrained-language)
+[![OpenSSF Scorecard](https://api.securityscorecards.dev/projects/github.com/wallies/KeyphraseVectorizers/badge)](https://securityscorecards.dev/viewer/?uri=github.com/wallies/KeyphraseVectorizers)
 
 KeyphraseVectorizers
 ===================== 
