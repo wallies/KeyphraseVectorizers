@@ -345,7 +345,7 @@ class _KeyphraseVectorizerMixin():
         # increase max length of documents that spaCy can parse
         # (should only be done if parser and ner are not used due to memory issues)
         if not custom_pos_tagger:
-            nlp.max_length = max([len(doc) for doc in document_list]) + 100
+            nlp.max_length = max(len(doc) for doc in document_list) + 100
 
         cp = nltk.RegexpParser('CHUNK: {(' + pos_pattern + ')}')
         if not custom_pos_tagger:

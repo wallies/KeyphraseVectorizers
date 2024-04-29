@@ -193,8 +193,8 @@ class KeyphraseCountVectorizer(_KeyphraseVectorizerMixin, BaseEstimator):
 
         # set n-gram range to zero if no keyphrases could be extracted
         if self.keyphrases:
-            self.max_n_gram_length = max([len(keyphrase.split()) for keyphrase in self.keyphrases])
-            self.min_n_gram_length = min([len(keyphrase.split()) for keyphrase in self.keyphrases])
+            self.max_n_gram_length = max(len(keyphrase.split()) for keyphrase in self.keyphrases)
+            self.min_n_gram_length = min(len(keyphrase.split()) for keyphrase in self.keyphrases)
         else:
             raise ValueError(
                 "Empty keyphrases. Perhaps the documents do not contain keyphrases that match the 'pos_pattern' parameter, only contain stop words, or you set the 'min_df'/'max_df' parameters too strict.")
