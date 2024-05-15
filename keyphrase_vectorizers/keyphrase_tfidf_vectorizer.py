@@ -84,6 +84,9 @@ class KeyphraseTfidfVectorizer(KeyphraseCountVectorizer):
     lowercase : bool, default=True
         Whether the returned keyphrases should be converted to lowercase.
 
+    use_lemmatizer : bool, default=False
+        Whether to lemmatize documents before extracting keyphrases. Keyphrases will be lemmatized.
+
     workers :int, default=1
             How many workers to use for spaCy part-of-speech tagging.
             If set to -1, use all available worker threads of the machine.
@@ -134,7 +137,9 @@ class KeyphraseTfidfVectorizer(KeyphraseCountVectorizer):
 
     def __init__(self, spacy_pipeline: Union[str, spacy.Language] = 'en_core_web_sm', pos_pattern: str = '<J.*>*<N.*>+',
                  stop_words: Union[str, List[str]] = 'english',
-                 lowercase: bool = True, workers: int = 1, spacy_exclude: List[str] = None,
+                 lowercase: bool = True,
+                 use_lemmatizer: bool = False,
+                 workers: int = 1, spacy_exclude: List[str] = None,
                  custom_pos_tagger: callable = None, max_df: int = None, min_df: int = None,
                  binary: bool = False, dtype: np.dtype = np.float64, norm: str = "l2",
                  use_idf: bool = True, smooth_idf: bool = True,
@@ -156,6 +161,7 @@ class KeyphraseTfidfVectorizer(KeyphraseCountVectorizer):
         self.pos_pattern = pos_pattern
         self.stop_words = stop_words
         self.lowercase = lowercase
+        self.use_lemmatizer = use_lemmatizer
         self.workers = workers
         self.spacy_exclude = spacy_exclude
         self.custom_pos_tagger = custom_pos_tagger
@@ -172,9 +178,9 @@ class KeyphraseTfidfVectorizer(KeyphraseCountVectorizer):
                                        sublinear_tf=self.sublinear_tf)
 
         super().__init__(spacy_pipeline=self.spacy_pipeline, pos_pattern=self.pos_pattern, stop_words=self.stop_words,
-                         lowercase=self.lowercase, workers=self.workers, spacy_exclude=self.spacy_exclude,
-                         custom_pos_tagger=self.custom_pos_tagger, max_df=self.max_df, min_df=self.min_df,
-                         binary=self.binary, dtype=self.dtype)
+                         lowercase=self.lowercase, use_lemmatizer=self.use_lemmatizer, workers=self.workers,
+                         spacy_exclude=self.spacy_exclude, custom_pos_tagger=self.custom_pos_tagger,
+                         max_df=self.max_df, min_df=self.min_df, binary=self.binary, dtype=self.dtype)
 
     def _check_params(self):
         """

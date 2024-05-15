@@ -24,6 +24,9 @@ class _KeyphraseVectorizerMixin():
     Provides common code for text vectorizers.
     """
 
+    def __init__(self):
+        self.lemmatized_documents = []
+
     def _document_frequency(self, document_keyphrase_count_matrix: List[List[int]]) -> np.array:
         """
         Count the number of non-zero values for each feature in sparse a matrix.
@@ -180,9 +183,12 @@ class _KeyphraseVectorizerMixin():
                                                                max_text_length=max_text_length)
             return splitted_document
 
+    def get_lemmatized_documents(self):
+        return self.lemmatized_documents
+
     def _get_pos_keyphrases(self, document_list: List[str], stop_words: Union[str, List[str]], spacy_pipeline: Union[str, spacy.Language],
                             pos_pattern: str, spacy_exclude: List[str], custom_pos_tagger: callable,
-                            lowercase: bool = True, workers: int = 1) -> List[str]:
+                            lowercase: bool = True, use_lemmatizer: bool = False, workers: int = 1) -> List[str]:
         """
         Select keyphrases with part-of-speech tagging from a text document.
         Parameters
@@ -212,6 +218,9 @@ class _KeyphraseVectorizerMixin():
 
         lowercase : bool, default=True
             Whether the returned keyphrases should be converted to lowercase.
+
+        use_lemmatizer : bool, default=False
+            Whether to lemmatize documents before extracting keyphrases. Keyphrases will be lemmatized.
 
         workers :int, default=1
             How many workers to use for spaCy part-of-speech tagging.
@@ -257,6 +266,10 @@ class _KeyphraseVectorizerMixin():
             )
 
         # triggers a parameter validation
+        if not isinstance(use_lemmatizer, bool):
+            raise ValueError(
+                "'use_lemmatizer' parameter must be of type bool"
+
         if ((not hasattr(spacy_exclude, '__iter__')) and (spacy_exclude is not None)) or (
                 isinstance(spacy_exclude, str)):
             raise ValueError(
@@ -281,7 +294,6 @@ class _KeyphraseVectorizerMixin():
                     psutil.cpu_count(logical=True))
             )
 
-
         stop_words_list = []
         if isinstance(stop_words, str):
             try:
@@ -302,14 +314,23 @@ class _KeyphraseVectorizerMixin():
         elif hasattr(stop_words, '__iter__'):
             stop_words_list = stop_words
 
-        # add spaCy POS tags for documents
+
+
+        if pos_tagger != None:
+          
+
+
         if not custom_pos_tagger:
             if isinstance(spacy_pipeline, spacy.Language):
                 nlp = spacy_pipeline
             else:
                 if not spacy_exclude:
-                    spacy_exclude = []
+                    spacy_exclude = ['ner', 'entity_linker', 'entity_ruler', 'textcat', 'textcat_multilabel',
+                                     'senter', 'sentencizer', 'tok2vec']
                 try:
+                    if use_lemmatizer:
+                        spacy_exclude.append("lemmatizer")
+
                     nlp = spacy.load(spacy_pipeline,
                                      exclude=spacy_exclude)
                 except OSError:
@@ -326,6 +347,9 @@ class _KeyphraseVectorizerMixin():
                     spacy.cli.download(spacy_pipeline)
                     nlp = spacy.load(spacy_pipeline,
                                      exclude=spacy_exclude)
+
+                pos_tagger_component = Language.component("pos_tagger", func=pos_tagger)
+                nlp.add_pipe("pos_tagger", name="pos_tagger", first=True)
 
         if workers != 1:
             os.environ["TOKENIZERS_PARALLELISM"] = "false"
@@ -351,7 +375,11 @@ class _KeyphraseVectorizerMixin():
         if not custom_pos_tagger:
             pos_tuples = []
             for tagged_doc in nlp.pipe(document_list, n_process=workers):
-                pos_tuples.extend([(word.text, word.tag_) for word in tagged_doc])
+                if use_lemmatizer:
+                    self.lemmatized_documents.append(' '.join([d.lemma_ for d in tagged_doc]))
+                    pos_tuples = [(d.lemma_, d.pos_) for d in tagged_doc]
+                else:
+                    pos_tuples.extend([(word.text, word.tag_) for word in tagged_doc])
         else:
             pos_tuples = custom_pos_tagger(raw_documents=document_list)
 
