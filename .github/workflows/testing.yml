@@ -86,7 +86,7 @@ jobs:
 
     - name: Get Python changed files
       id: changed-py-files
-      uses: tj-actions/changed-files@20576b4b9ed46d41e2d45a2256e5e2316dde6834 # v43.0.1
+      uses: tj-actions/changed-files@cc733854b1f224978ef800d29e4709d5ee2883e4 # v44.5.5
       with:
         files: |
           keyphrase_vectorizers/*.py
